@@ -1,7 +1,17 @@
 language: ruby
 
+env:
+  - db: localhost
+
 services:
-  - docker
+  - postgresql
+
+addons:
+  hosts:
+      - db
+
 script:
   - bundle exec rake test
+  - bundle exec rake db:create
+  - bundle exec rspec
     
