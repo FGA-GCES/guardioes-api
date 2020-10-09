@@ -4,11 +4,15 @@ env:
   - db: localhost
 
 services:
+  - elasticsearch
   - postgresql
 
 addons:
   hosts:
       - db
+
+before_script:
+  - sleep 10
 
 script:
   - bundle exec rake test
