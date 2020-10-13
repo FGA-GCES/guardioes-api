@@ -1,21 +1,17 @@
+addons:
+  postgresql: 9.6
+before_script:
+  - psql -c 'create database myapp_test;' -U postgres
+  - bundle install
+dist: trusty
 language: ruby
-
-env:
-  - db: localhost
-
-services:
-  - elasticsearch
-  - postgresql
-
 addons:
   hosts:
       - db
 
-before_script:
-  - sleep 10
-
 script:
-  - bundle exec rake test
-  - bundle exec rake db:create
+  - bundle exec rubocop app/controllers
+  - bundle exec rubocop app/models
+  - RAILS_ENV=test bundle exec rake db:create 
+  - RAILS_ENV=test bundle exec rake db:migrate
   - bundle exec rspec
-    
