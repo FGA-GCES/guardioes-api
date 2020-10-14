@@ -14,12 +14,12 @@ RSpec.describe Household, type: :model do
   let (:valid_household) {
     Household.new(
       :description => "Clebin's household", 
-      :birthdate => , 
-      :country => , 
-      :gender => , 
-      :race => ,
+      :birthdate => "01/01/1968", 
+      :country => "Brazil", 
+      :gender => "male", 
+      :race => "black",
       :user_id => 1,
-      :kinship => 
+      :kinship => "Father"
     )
   }
 
@@ -36,8 +36,8 @@ RSpec.describe Household, type: :model do
       end
       it "updates household" do
         valid_household.save()
-        expect(Household.all[0].description).to eq(valid_user.description)
-        valid_user.update(:description=>"Clebao's household")
+        expect(Household.all[0].description).to eq(valid_household.description)
+        valid_household.update(:description=>"Clebao's household")
         expect(Household.all[0].description).to eq("Clebao's household")
       end
     end
