@@ -19,8 +19,8 @@ addons:
       - db
 
 script:
-  - bundle exec rubocop app/controllers
-  - bundle exec rubocop app/models
+  # - bundle exec rubocop app/controllers
+  # - bundle exec rubocop app/models
   - RAILS_ENV=test bundle exec rake db:create 
   - RAILS_ENV=test bundle exec rake db:migrate
   - bundle exec rspec
