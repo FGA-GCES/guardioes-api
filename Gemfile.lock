@@ -228,10 +228,6 @@ GEM
       unicode-display_width (>= 1.4.0, < 2.0)
     rubocop-ast (0.8.0)
       parser (>= 2.7.1.5)
-    rubocop-rails (2.8.1)
-      activesupport (>= 4.2.0)
-      rack (>= 1.1)
-      rubocop (>= 0.87.0)
     ruby-ole (1.2.12.2)
     ruby-progressbar (1.10.1)
     ruby_dep (1.5.0)
@@ -307,7 +303,6 @@ DEPENDENCIES
   roo-xls
   rspec-rails (~> 3.5)
   rubocop
-  rubocop-rails
   searchkick
   sendgrid-ruby
   shoulda-matchers (~> 3.1)
