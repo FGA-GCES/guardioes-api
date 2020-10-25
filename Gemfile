@@ -26,6 +26,7 @@ gem 'puma', '~> 3.11'
 gem "roo", "~> 2.8.0"
 gem 'roo-xls'
 gem 'searchkick'
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
@@ -69,7 +70,7 @@ group :test do
   gem 'factory_bot_rails', '~> 4.0'
   gem 'shoulda-matchers', '~> 3.1'
   gem 'database_cleaner'
-  gem 'simplecov', require: false
+  gem 'simplecov', '< 0.18', require: false
 end
 
 
