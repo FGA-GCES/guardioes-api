@@ -12,7 +12,8 @@ RUN apk add --update --no-cache \
   zlib-dev \
   nodejs \
   yarn \
-  tzdata
+  tzdata \
+  gcc 
 
 COPY Gemfile Gemfile.lock ./
 RUN bundle install

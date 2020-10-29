@@ -313,7 +313,7 @@ DEPENDENCIES
   searchkick
   sendgrid-ruby
   shoulda-matchers (~> 3.1)
-  simplecov (< 0.18)
+  simplecov (~> 0.17.1)
   spring
   spring-watcher-listen (~> 2.0.0)
   tty-spinner

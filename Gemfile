@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -6,7 +8,7 @@ ruby '2.5.3'
 # Repository for collecting Locale data for Ruby on Rails I18n as well as other interesting, Rails related I18n stuff http://rails-i18n.org
 gem 'rails-i18n', '~> 5.1'
 # acts_as_paranoid for Rails 3, 4 and 5
-gem "paranoia", "~> 2.2"
+gem 'paranoia', '~> 2.2'
 # A terminal spinner for tasks that have non-deterministic time frame.
 gem 'tty-spinner'
 # Terminal output styling with intuitive and clean API that doesn't monkey patch String class.
@@ -23,10 +25,9 @@ gem 'rails', '~> 5.2.2'
 gem 'pg', '>= 0.18', '< 2.0'
 # Use Puma as the app server
 gem 'puma', '~> 3.11'
-gem "roo", "~> 2.8.0"
+gem 'roo', '~> 2.8.0'
 gem 'roo-xls'
 gem 'searchkick'
-
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
@@ -48,15 +49,14 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
 
-
 gem 'rubocop', require: false
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  gem 'rspec-rails', '~> 3.5'
-  gem 'faker'
+  gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'capybara'
+  gem 'faker'
+  gem 'rspec-rails', '~> 3.5'
 end
 
 group :development do
@@ -67,12 +67,11 @@ group :development do
 end
 
 group :test do
+  gem 'database_cleaner'
   gem 'factory_bot_rails', '~> 4.0'
   gem 'shoulda-matchers', '~> 3.1'
-  gem 'database_cleaner'
-  gem 'simplecov', '< 0.18', require: false
+  gem 'simplecov', '~> 0.17.1', require: false # 0.17.1
 end
 
-
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
