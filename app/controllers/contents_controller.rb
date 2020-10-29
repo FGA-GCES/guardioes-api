@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class ContentsController < ApplicationController
   before_action :authenticate_user!, only: [:index]
-  before_action :authenticate_admin!, only: [:create, :destroy, :update]
-  before_action :set_content, only: [:show, :update, :destroy]
+  before_action :authenticate_admin!, only: %i[create destroy update]
+  before_action :set_content, only: %i[show update destroy]
 
   # GET /contents
   def index
@@ -43,13 +45,14 @@ class ContentsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_content
-      @content = Content.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def content_params
-      params.require(:content).permit(:title, :body, :content_type, :app_id, :source_link)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_content
+    @content = Content.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def content_params
+    params.require(:content).permit(:title, :body, :content_type, :app_id, :source_link)
+  end
 end

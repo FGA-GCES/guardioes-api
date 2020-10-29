@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 class ManagersController < ApplicationController
-    before_action :authenticate_admin!
-    before_action :set_app
-    
-    def index
-        render json: @app.managers
-    end
+  before_action :authenticate_admin!
+  before_action :set_app
 
-    private
+  def index
+    render json: @app.managers
+  end
 
-    def set_app
-        @app = App.find current_admin.app_id
-    end
+  private
+
+  def set_app
+    @app = App.find current_admin.app_id
+  end
 end

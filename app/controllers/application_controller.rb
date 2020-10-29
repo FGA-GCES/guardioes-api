@@ -1,10 +1,13 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::API
   # before_action :ensure_json_request
   # protect_from_forgery
-  
+
   def ensure_json_request
-      return if request.headers["Accept"] =~ /vnd\.api\+json/
-      render :nothing => true, :status => 406
+    return if request.headers['Accept'] =~ /vnd\.api\+json/
+
+    render nothing: true, status: 406
   end
 
   # methods used on Admin and User registration
@@ -21,12 +24,11 @@ class ApplicationController < ActionController::API
       errors: [
         {
           status: '400',
-          title: I18n.translate("validations.title"),
+          title: I18n.translate('validations.title'),
           detail: resource.errors,
           code: resource
         }
       ]
     }, status: :bad_request
   end
-
 end

@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class SymptomsController < ApplicationController
   before_action :authenticate_admin!, except: [:index]
-  before_action :set_symptom, only: [:show, :update, :destroy]
+  before_action :set_symptom, only: %i[show update destroy]
 
   # GET /symptoms
   def index
@@ -40,13 +42,14 @@ class SymptomsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_symptom
-      @symptom = Symptom.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def symptom_params
-      params.require(:symptom).permit(:description, :code, :priority, :details, :app_id)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_symptom
+    @symptom = Symptom.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def symptom_params
+    params.require(:symptom).permit(:description, :code, :priority, :details, :app_id)
+  end
 end

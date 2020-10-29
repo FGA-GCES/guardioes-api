@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AdminController < ApplicationController
   before_action :authenticate_admin!
   def index
@@ -6,15 +8,15 @@ class AdminController < ApplicationController
   end
 
   private
+
   def admin_params
     params.require(:admin).permit(
-        :email,
-        :password,
-        :first_name,
-        :last_name,
-        :is_god,
-        :app_id
-      )
-  end 
+      :email,
+      :password,
+      :first_name,
+      :last_name,
+      :is_god,
+      :app_id
+    )
+  end
 end
-
