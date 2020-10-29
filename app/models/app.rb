@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class App < ApplicationRecord
   has_many :admins
   has_many :users
@@ -9,16 +11,16 @@ class App < ApplicationRecord
   searchkick
 
   validates :app_name,
-    presence: true,
-    length: {
-      minimum: 1,
-      maximum: 255
-    }
+            presence: true,
+            length: {
+              minimum: 1,
+              maximum: 255
+            }
 
   validates :owner_country,
-    presence: true,
-    length: {
-      minimum: 1,
-      maximum: 255
-    }
+            presence: true,
+            length: {
+              minimum: 1,
+              maximum: 255
+            }
 end

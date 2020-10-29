@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Admin < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
@@ -10,8 +12,8 @@ class Admin < ApplicationRecord
   belongs_to :app
 
   validates_presence_of :first_name, :last_name, :email, :app_id
-  
-  # validates :first_name, 
+
+  # validates :first_name,
   #   presence: true,
   #   length: {
   #     minimum: 1,
@@ -27,7 +29,7 @@ class Admin < ApplicationRecord
   #     maximum: 255,
   #     too_long: I18n.translate("admin.validations.last_name.too_long")
   #   }
-  # validates :email, 
+  # validates :email,
   #   presence: true,
   #   format: { with: URI::MailTo::EMAIL_REGEXP, message: I18n.translate("validations.email.message") },
   #   length: {
@@ -35,5 +37,5 @@ class Admin < ApplicationRecord
   #     too_short: I18n.translate("admin.validations.email.too_short"),
   #     maximum: 255,
   #     too_long: I18n.translate("admin.validations.email.too_long")
-  #   }    
+  #   }
 end
