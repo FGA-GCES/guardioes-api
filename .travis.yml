@@ -4,6 +4,8 @@ env:
 
 addons:
   postgresql: 9.6
+  hosts:
+    - db
 
 before_script:
   - psql -c 'create database myapp_test;' -U postgres
@@ -14,9 +16,6 @@ before_script:
 
 dist: trusty
 language: ruby
-addons:
-  hosts:
-      - db
 
 script:
   - bundle exec rubocop app/controllers
