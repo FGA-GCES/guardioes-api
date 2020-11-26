@@ -39,36 +39,56 @@ class Survey < ApplicationRecord
     end
   end
   
-  def get_message(user)
-    @user_symptoms = []
-    symptom.map { |symptom|
-      if Symptom.where(:description=>symptom).any?
-        @user_symptoms.append(Symptom.where(:description=>symptom)[0])
-      end
-    }
-    symptoms_and_syndromes_data = {}
-    symptom_messages = get_symptoms_messages
-    if symptom_messages.any?
-      symptoms_and_syndromes_data[:symptom_messages] = symptom_messages
-    end
-    top_3 = get_top_3_syndromes
-    if top_3.any?
-      symptoms_and_syndromes_data[:top_3] = top_3.map do |obj| 
-        # Possible COVID case detected, send mail to active vigilance about case
-        if obj[:syndrome].description == "Síndrome Gripal" && user.is_vigilance == true
-          VigilanceMailer.covid_vigilance_email(self, user).deliver
-        end
-        
-        { name: obj[:syndrome].description, percentage: obj[:likelyhood] }
-      end
+  def user_has_contributed_today?
+    date = DateTime.now.in_time_zone(Time.zone).beginning_of_day
+    past_surveys = self.get_past_surveys(self.user_id, date)
+    has_contributed = past_surveys.length > 1
+    return has_contributed
+  end
 
-      syndrome_message = top_3[0][:syndrome].message
-      if !syndrome_message.nil?
-        symptoms_and_syndromes_data[:top_syndrome_message] = syndrome_message || ''
+  def get_past_surveys user, date
+    Survey.filter_by_user(user.id).where("created_at >= ?", date).where(household: self.household)
+  end
+
+  def get_message(user) #here
+    @user_symptoms = []
+    symptom.map do |symptom|
+      if Symptom.where(:description=>symptom).any?
+        @user_symptoms.append(Symptom.where(:description=>symptom).first)
       end
     end
+
+    symptoms_and_syndromes_data = {}
+    symptoms_and_syndromes_data[:symptom_messages] = get_symptoms_messages || ''
+
+    top_3 = update_top_3_syndromes user
+    symptoms_and_syndromes_data[:top_3] = top_3
+
+    syndrome_message = top_3&.first[:syndrome]&.message
+    symptoms_and_syndromes_data[:top_syndrome_message] = syndrome_message || ''
 
     return symptoms_and_syndromes_data
+  end
+
+  private def update_top_3_syndromes user
+    top_3 = get_top_3_syndromes
+    return '' unless top_3.any?
+
+    top_3.map do |obj|
+        name = obj[:syndrome].description
+        handle_possible_covid_cases(name, user)
+        { name: name, percentage: obj[:likelyhood] }
+    end
+  end
+  
+  private def handle_possible_covid_cases name, user
+    return unless possible_covid_case? name, user
+
+    VigilanceMailer.covid_vigilance_email(self, user).deliver
+  end
+
+  private def possible_covid_case? name, user
+    name == 'Síndrome Gripal' && user.is_vigilance
   end
 
   scope :filter_by_user, ->(user) { where(user_id: user) }
