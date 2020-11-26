@@ -6,14 +6,7 @@ class SyndromesController < ApplicationController
 
   # GET /syndromes
   def index
-    if current_user.nil? && current_manager.nil?
-      @user = current_admin
-    elsif current_admin.nil? && current_user.nil?
-      @user = current_manager
-    else
-      @user = current_user
-    end
-    
+    @user = current_admin || current_manager || current_user
     @syndromes = Syndrome.filter_syndrome_by_app_id(@user.app_id)
 
     render json: @syndromes
@@ -29,8 +22,8 @@ class SyndromesController < ApplicationController
     @symptoms = syndrome_params[:symptom]
     @syndrome = Syndrome.new(syndrome_params.except(:symptom))
     if @syndrome.save
-      if !syndrome_params[:symptom].nil?
-        create_symptoms_and_connections
+      if !@symptoms.nil?
+        create_or_update_symptoms
       end
       render json: @syndrome, status: :created, location: @syndrome
     else
@@ -42,8 +35,8 @@ class SyndromesController < ApplicationController
   def update
     @symptoms = syndrome_params[:symptom]
     if @syndrome.update(syndrome_params.except(:symptom))
-      if !syndrome_params[:symptom].nil?
-        update_symptoms_and_connections
+      if !@symptoms.nil?
+        create_or_update_symptoms
       end
       render json: @syndrome
     else
@@ -57,44 +50,28 @@ class SyndromesController < ApplicationController
   end
 
   private
-
-    def create_symptoms_and_connections
+    def create_or_update_symptoms
       @symptoms.each do |symptom|
-        created_symptom = Symptom.find_or_create_by!(description: symptom[:description]) do |symptomLinked|
-          symptomLinked.code = symptom[:code]
-          symptomLinked.details = symptom[:details]
-          symptomLinked.priority = symptom[:priority]
-          symptomLinked.app_id = current_admin.app_id
-        end
-        syndrome_symptom_percentage = SyndromeSymptomPercentage.create(
-          percentage: symptom[:percentage] || 0,
-          symptom: created_symptom,
-          syndrome: @syndrome
-        )
+        created_symptom = create_sympton_connections symptom
+        create_or_update_connection symptom[:percentage], created_symptom
       end
     end
 
-    def update_symptoms_and_connections
-      @symptoms.each do |symptom|
-        created_symptom = Symptom.find_or_create_by!(description: symptom[:description]) do |symptomLinked| # Create or fetch
-          symptomLinked.code = symptom[:code],
-          symptomLinked.details = symptom[:details]
-          symptomLinked.priority = symptom[:priority]
-          symptomLinked.app_id = symptom[:app_id] || 1
-        end
-        if SyndromeSymptomPercentage.where(syndrome: @syndrome, symptom: created_symptom).any?              # If connection exists, update percentage
-          connection = SyndromeSymptomPercentage.where(syndrome:@syndrome,symptom:created_symptom)[0]
+    def create_sympton_connections(symptom, app_id)
+      Symptom.find_or_create_by!(description: symptom[:description]) do |symptomLinked|
+        symptomLinked.code = symptom[:code]
+        symptomLinked.details = symptom[:details]
+        symptomLinked.priority = symptom[:priority]
+        symptomLinked.app_id = symptom[:app_id] || current_admin.app_id
+      end
+    end
+
+    def create_or_update_connection(percentage, symptom)
+      SyndromeSymptomPercentage.where(symptom: symptom, syndrome: @syndrome).first_or_create do |connection|
           connection.percentage = symptom[:percentage] || 0
-          connection.save()
-        else                                                                                                # Otherwise, create
-          syndrome_symptom_percentage = SyndromeSymptomPercentage.create(
-            percentage: symptom[:percentage] || 0,
-            symptom: created_symptom,
-            syndrome: @syndrome
-          )
-        end
       end
     end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_syndrome
       @syndrome = Syndrome.find(params[:id])
