@@ -22,7 +22,7 @@ class SyndromesController < ApplicationController
     @symptoms = syndrome_params[:symptom]
     @syndrome = Syndrome.new(syndrome_params.except(:symptom))
     if @syndrome.save
-      if !@symptoms.nil?
+      unless @symptoms.nil?
         create_or_update_symptoms
       end
       render json: @syndrome, status: :created, location: @syndrome
@@ -35,7 +35,7 @@ class SyndromesController < ApplicationController
   def update
     @symptoms = syndrome_params[:symptom]
     if @syndrome.update(syndrome_params.except(:symptom))
-      if !@symptoms.nil?
+      unless @symptoms.nil?
         create_or_update_symptoms
       end
       render json: @syndrome
@@ -57,7 +57,7 @@ class SyndromesController < ApplicationController
       end
     end
 
-    def create_sympton_connections(symptom, app_id)
+    def create_sympton_connections(symptom)
       Symptom.find_or_create_by!(description: symptom[:description]) do |symptom_data|
         symptom_data.code = symptom[:code]
         symptom_data.details = symptom[:details]
@@ -68,7 +68,7 @@ class SyndromesController < ApplicationController
 
     def create_or_update_connection(percentage, symptom)
       SyndromeSymptomPercentage.where(symptom: symptom, syndrome: @syndrome).first_or_create do |symptom_percentage|
-          symptom_percentage.percentage = symptom[:percentage] || 0
+          symptom_percentage.percentage = percentage || 0
       end
     end
 
