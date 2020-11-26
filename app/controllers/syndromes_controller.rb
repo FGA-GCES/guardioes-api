@@ -58,17 +58,17 @@ class SyndromesController < ApplicationController
     end
 
     def create_sympton_connections(symptom, app_id)
-      Symptom.find_or_create_by!(description: symptom[:description]) do |symptomLinked|
-        symptomLinked.code = symptom[:code]
-        symptomLinked.details = symptom[:details]
-        symptomLinked.priority = symptom[:priority]
-        symptomLinked.app_id = symptom[:app_id] || current_admin.app_id
+      Symptom.find_or_create_by!(description: symptom[:description]) do |symptom_data|
+        symptom_data.code = symptom[:code]
+        symptom_data.details = symptom[:details]
+        symptom_data.priority = symptom[:priority]
+        symptom_data.app_id = symptom[:app_id] || current_admin.app_id
       end
     end
 
     def create_or_update_connection(percentage, symptom)
-      SyndromeSymptomPercentage.where(symptom: symptom, syndrome: @syndrome).first_or_create do |connection|
-          connection.percentage = symptom[:percentage] || 0
+      SyndromeSymptomPercentage.where(symptom: symptom, syndrome: @syndrome).first_or_create do |symptom_percentage|
+          symptom_percentage.percentage = symptom[:percentage] || 0
       end
     end
 
