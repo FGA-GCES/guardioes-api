@@ -77,39 +77,39 @@ class User < ApplicationRecord
   end
 
   def update_streak(survey)
-    if survey.household_id
-      obj = survey.household
-      last_survey = Survey.where("household_id = ?", survey.household_id).order("id DESC").offset(1).first
-    else
-      obj = self
-      last_survey = Survey.where("user_id = ?", self.id).order("id DESC").offset(1).first
-    end
+    current_user = self.get_current_user
+    
+    key = survey.household ? 'household_id': 'user_id'
+    last_survey = Survey.where("#{key} = ?", current_user.id)
+      .order("id DESC").offset(1).first
 
     if last_survey
       if last_survey.created_at.day == survey.created_at.prev_day.day
-        obj.streak += 1
+        current_user.streak += 1
       elsif last_survey.created_at.day != survey.created_at.day
-        obj.streak = 1
+        current_user.streak = 1
       end
     else
-      obj.streak = 1
+      current_user.streak = 1
     end
-    obj.update_attribute(:streak, obj.streak)
+    current_user.update_attribute(:streak, current_user.streak)
   end
 
   def get_feedback_message(survey)
-    if survey.household_id
-      obj = survey.household
-    else
-      obj = self
-    end
-    
-    message = Message.where.not(feedback_message: [nil, ""]).where("day = ?", obj.streak).first
+    current_user = self.get_current_user
+
+    message = Message.where.not(feedback_message: [nil, ""])
+      .where("day = ?", current_user.streak).first
     if !message
       message = Message.where.not(feedback_message: [nil, ""]).where("day = ?", -1)
-      index = obj.streak % message.size
+      index = current_user.streak % message.size
       message = message[index]
     end
     return message.feedback_message
+  end
+
+  def get_current_user
+    current_user = survey.household ? survey.household : self
+    current_user
   end
 end
