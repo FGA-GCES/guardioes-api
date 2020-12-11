@@ -26,7 +26,27 @@ Usamos nessa API:
 
 ### O que fazer antes
 
-Crie um arquivo chamado 'master.key' na pasta '/config', esse arquivo deve conter uma chave para tudo funcionar corretamente. Você pode conseguir essa chave com algum desenvolvedor do projeto.
+Crie um arquivo chamado `master.key` na pasta `/config`, esse arquivo deve conter uma chave para tudo funcionar corretamente. Você pode conseguir essa chave com algum desenvolvedor do projeto. 
+
+Depois crie um arquivo chamado `.env` no mesmo diretório que o arquivo `docker-compose.yml` com as seguintes informações:
+
+```
+# docker-compose.yml DB variables
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=myapp_development
+
+# docker-compose.yml web variables
+GOOGLE_MAPS_API_KEY=AIzaSyBgA7vme-oh1GWhnkNwQUIRECwPAU4wkp4
+ELASTICSEARCH_URL=http://localhost:9200
+DATABASE_URL=postgres://postgres@db
+MAILER_URL=
+TWITTER_API_CONSUMER_SECRET=
+TWITTER_API_ACESS_TOKEN_SECRET=
+VIGILANCE_EMAIL=
+CSV_DATA_KEY=
+
+```
 
 ### Levantando
 
@@ -49,6 +69,12 @@ docker-compose run web rake db:migrate
 ```
 
 Teste se tudo está funcionando entrando em [http://localhost:3001](http://localhost:3001]). Você deverá ver um JSON se tudo funciona normalmente.
+
+Após a migração da base de dados, para o correto funcionamento de todos os features da API, você deve iniciar os cronjobs, para fazer isso:
+
+```
+sudo docker-compose run -d web bundle exec crono RAILS_ENV=development
+```
 
 ### Erros
 
@@ -83,6 +109,13 @@ Isso significa que a API tentou mandar uma mensagem para a base de dados Elastic
 Para solucionar, basta levantar uma instância do [guadioes web](https://github.com/proepidesenvolvimento/guardioes-web/) rodando na porta 9200 ou alterar o endereço do elastic no arquivo elasticsearch.rb.
 
 ### Testes
+Primeiramente realize o setup do banco de dados de testes
+
+```
+bundle exec rake db:drop RAILS_ENV=test
+bundle exec rake db:create RAILS_ENV=test
+bundle exec rake db:schema:load RAILS_ENV=test
+```
 
 Basta escrever
 
@@ -95,6 +128,10 @@ E caso queria testar um modulo em específico
 ```
 rspec spec/[pasta]/[arquivo]
 ```
+
+### Continuous Integration
+
+Quando uma novo commit é feito, este sobre pro [Travis](https://travis-ci.org/), onde é rodada a bateria de testes para certificar que nada quebrou.
 
 ## License & copyright
 

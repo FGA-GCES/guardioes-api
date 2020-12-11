@@ -26,6 +26,10 @@ gem 'puma', '~> 3.11'
 gem "roo", "~> 2.8.0"
 gem 'roo-xls'
 gem 'searchkick'
+gem 'cancancan'
+gem 'kaminari' 
+gem 'pager_api'
+gem 'pagy'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
@@ -47,12 +51,23 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
 
+# Configures an API that communicates with twitter
+gem 'twitter'
+# Time-based platform-independent background job scheduler daemon for Ruby on Rails.
+gem 'crono'
+# Sets up the deamon to run alongside crono
+gem 'daemons'
+
+gem 'rubocop', ">=1", require: false
+gem 'rubocop-rails', require: false
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'rspec-rails', '~> 3.5'
   gem 'faker'
   gem 'capybara'
+  gem 'simplecov', '~> 0.17.1', require: false # 0.17.1
 end
 
 group :development do

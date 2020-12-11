@@ -1,7 +1,7 @@
 class RegistrationController < Devise::RegistrationsController
-  before_action :authenticate_admin!, only: [:create_manager]
   before_action :set_app, only: :create, if: -> { params[:user] }
   before_action :create_admin, if: -> { params[:admin] }
+  before_action :create_group_manager, if: -> { params[:group_manager] }
   before_action :create_manager, if: -> { params[:manager] }
 
   respond_to :json
@@ -45,7 +45,7 @@ class RegistrationController < Devise::RegistrationsController
   
         if find_app.blank?
           name = params[:user][:residence]
-          app = App.create!(app_name: name, owner_country: name)
+          app = App.create!(app_name: name, owner_country: name, twitter: nil)
   
           @new_sign_up_params = sign_up_params.merge(app_id: app.id).except(:residence)
         else
@@ -65,10 +65,19 @@ class RegistrationController < Devise::RegistrationsController
     end
   end 
 
-
   def create_manager
-    if params[:manager]
+    if params[:manager] 
       @sign_up_params = sign_up_params
+    else
+      @sign_up_params = nil
+    end
+  end 
+
+  def create_group_manager
+    if params[:group_manager] && (current_admin || current_group_manager)
+      @sign_up_params = sign_up_params
+    else
+      @sign_up_params = nil
     end
   end 
 
@@ -92,7 +101,8 @@ class RegistrationController < Devise::RegistrationsController
         :identification_code,
         :group_id,
         :school_unit_id,
-        :risk_group
+        :risk_group,
+        :policy_version
       )
     elsif params[:admin]
       params.require(:admin).permit(
@@ -103,12 +113,30 @@ class RegistrationController < Devise::RegistrationsController
         :is_god,
         :app_id
       )
-    else
-      params.require(:manager).permit(
+    elsif params[:group_manager]
+      params.require(:group_manager).permit(
         :email,
         :name,
         :password,
-        :app_id
+        :app_id,
+        :group_name,
+        :require_id,
+        :id_code_length,
+        :twitter
+      )
+    else
+      params.require(:manager).permit(
+        :name,
+        :email,
+        :password,
+        :app_id,
+        permission_attributes: [
+          models_create: [],
+          models_read: [],
+          models_update: [],
+          models_destroy: [],
+          models_manage: []
+        ]
       )
     end
   end

@@ -24,20 +24,33 @@ namespace :dev do
       end
     end
 
-    # show_spinner("Creating admins...") do
-    #   App.all.each do |app|
-    #     2.times do
-    #       Admin.create!(
-    #         email: Faker::Internet.email,
-    #         password: "12345678",
-    #         first_name: Faker::Name.first_name,
-    #         last_name: Faker::Name.last_name,
-    #         is_god: [true, false].sample,
-    #         app_id: app.id
-    #       )
-    #     end
-    #   end
-    # end
+    show_spinner("Creating admins...") do
+      App.all.each do |app|
+        2.times do
+          Admin.create!(
+            email: Faker::Internet.email,
+            password: "12345678",
+            first_name: Faker::Name.first_name,
+            last_name: Faker::Name.last_name,
+            is_god: [true, false].sample,
+            app_id: 1
+          )
+        end
+        Permission.create!(
+          models_create: [:content, :symptom],
+          models_read: [:all],
+          models_update: [:content, :symptom],
+          models_destroy: [:content],
+          models_manage: [],
+        )
+        Manager.create!(
+          email: Faker::Internet.email,
+          password: "12345678",
+          name: Faker::Name.first_name,
+          app_id: 1
+        )
+      end
+    end
 
     show_spinner("Creating 100 example users...") do
       100.times do |i|
@@ -139,7 +152,8 @@ namespace :dev do
       show_spinner("Criando Aplicativo do Brasil...") do 
         App.create(
           owner_country: "Brasil",
-          app_name: "Guardiões da Saúde"
+          app_name: "Guardioes da Saude",
+          twitter: "appguardioes"
         )
       end
 
