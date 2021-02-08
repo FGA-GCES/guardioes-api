@@ -40,16 +40,8 @@ class SurveysController < ApplicationController
     filters = [
       :id, :created_at, "user_id", "user_name", :user_created_at, :identification_code, "household_id", "household_created_at", "household_identification_code"
     ]
-    begin_datetime = params[:begin]
-    end_datetime = params[:end]
-    if begin_datetime == 'now'
-      begin_datetime = DateTime.now().strftime("%Y-%m-%d %H:%M:%S %z")
-    end
-    if end_datetime == 'now'
-      end_datetime = DateTime.now().strftime("%Y-%m-%d %H:%M:%S %z")
-    end
-    begin_datetime = DateTime.parse(begin_datetime)
-    end_datetime = DateTime.parse(end_datetime)
+    begin_datetime = str_to_datetime(params[:begin])
+    end_datetime = str_to_datetime(params[:end])
     @surveys = Survey.where('created_at >= ? AND created_at <= ?', begin_datetime, end_datetime).all
     if @surveys.empty?
       return render json: { message: "No data was found in given period:   #{begin_datetime} -> #{end_datetime}" }
@@ -130,6 +122,9 @@ class SurveysController < ApplicationController
   end
 
   private
+    def str_to_datetime(str_date)
+      if str_date  == 'now' then DateTime.now else DateTime.parse(str_date) rescue nil end
+    end
     def to_csv_search_data
       attributes = []
       @surveys.first.search_data.each do |key, value|
